@@ -4,8 +4,18 @@ declare(strict_types=1);
 
 namespace Gingerminds\LaravelCms\Providers;
 
-use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
+use Gingerminds\LaravelCms\ApiProvider\Menu\MenuProvider;
+use Gingerminds\LaravelCms\Http\Controllers\Menu\MenuController;
+use Gingerminds\LaravelCms\Http\Controllers\Menu\MenuItemController;
+use Gingerminds\LaravelCms\Http\Request\Menu\MenuItemRequest;
+use Gingerminds\LaravelCms\Http\Request\Menu\MenuRequest;
+use Gingerminds\LaravelCms\Models\Menu\Menu;
+use Gingerminds\LaravelCms\Models\Menu\MenuItem\MenuItem;
+use Gingerminds\LaravelCms\Repositories\Menu\MenuItemRepository;
+use Gingerminds\LaravelCms\Repositories\Menu\MenuRepository;
+use Gingerminds\LaravelCms\Resolver\ResourceResolver;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -16,26 +26,43 @@ class LaravelCmsServiceProvider extends ServiceProvider
     {
         $this->app->register(LaravelCmsAuthServiceProvider::class);
 
-        //        $this->app->bind(
-        //            MediaController::class,
-        //            ResourceResolver::controller('media')
-        //        );
-        //        $this->app->bind(
-        //            MediaRepository::class,
-        //            ResourceResolver::repository('media')
-        //        );
-        //        $this->app->bind(
-        //            Media::class,
-        //            ResourceResolver::model('media')
-        //        );
-        //        $this->app->bind(
-        //            MediaProvider::class,
-        //            ResourceResolver::provider('media')
-        //        );
-        //        $this->app->bind(
-        //            MediaRequest::class,
-        //            ResourceResolver::request('media')
-        //        );
+        $this->app->bind(
+            MenuController::class,
+            ResourceResolver::controller('menu')
+        );
+        $this->app->bind(
+            MenuRepository::class,
+            ResourceResolver::repository('menu')
+        );
+        $this->app->bind(
+            Menu::class,
+            ResourceResolver::model('menu')
+        );
+        $this->app->bind(
+            MenuProvider::class,
+            ResourceResolver::provider('menu')
+        );
+        $this->app->bind(
+            MenuRequest::class,
+            ResourceResolver::request('menu')
+        );
+
+        $this->app->bind(
+            MenuItemController::class,
+            ResourceResolver::controller('menu_item')
+        );
+        $this->app->bind(
+            MenuItemRepository::class,
+            ResourceResolver::repository('menu_item')
+        );
+        $this->app->bind(
+            MenuItem::class,
+            ResourceResolver::model('menu_item')
+        );
+        $this->app->bind(
+            MenuItemRequest::class,
+            ResourceResolver::request('menu_item')
+        );
 
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/gingerminds-cms.php',
@@ -47,18 +74,13 @@ class LaravelCmsServiceProvider extends ServiceProvider
             'Gingerminds\\LaravelCms\\ApiProvider\\',
             ProviderInterface::class
         );
-
-        // Processors
-        $this->tagClassesFromPath(
-            __DIR__ . '/../StateProcessor',
-            'Gingerminds\\LaravelCms\\StateProcessor\\',
-            ProcessorInterface::class
-        );
     }
 
     public function boot(): void
     {
-        //Route::model('media', ResourceResolver::model('media'));
+        Route::model('menu', ResourceResolver::model('menu'));
+
+        Route::model('menu_item', ResourceResolver::model('menu_item'));
 
         // Chargement des routes du package
         if (! $this->app->routesAreCached()) {
@@ -84,13 +106,6 @@ class LaravelCmsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../config/gingerminds-cms.php' => config_path('gingerminds-cms.php'),
         ], 'gingerminds-cms-config');
-
-        //        if ($this->app->runningInConsole()) {
-        //            $this->publishes([
-        //                __DIR__ . '/../../resources/scss' => resource_path('scss/vendor/gingerminds-cms'),
-        //                __DIR__ . '/../../resources/js'   => resource_path('js/vendor/gingerminds-cms'),
-        //            ], 'gingerminds-assets');
-        //        }
     }
 
     private function tagClassesFromPath(string $path, string $namespace, string $interface): void
