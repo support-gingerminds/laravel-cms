@@ -13,6 +13,20 @@ use Gingerminds\LaravelCms\ApiProvider\MenuProvider;
 use Gingerminds\LaravelCms\Http\Request\Menu\MenuRequest;
 
 return [
+    'tiptap' => [
+        'presets' => [
+            'default' => [
+                'extensions' => ['bold', 'italic', 'underline', 'strike', 'link', 'bulletList', 'orderedList', 'history'],
+            ],
+            'minimal' => [
+                'extensions' => ['bold', 'italic', 'underline', 'link'],
+            ],
+            'full' => [
+                'extensions' => ['bold', 'italic', 'strike', 'underline', 'link', 'bulletList', 'orderedList', 'blockquote', 'heading', 'horizontalRule', 'history'],
+            ],
+        ],
+    ],
+
     'resources' => [
         'menu' => [
             'model' => Menu::class,
