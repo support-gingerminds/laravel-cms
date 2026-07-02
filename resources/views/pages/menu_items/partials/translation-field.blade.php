@@ -18,11 +18,16 @@
     />
 </div>
 <div class="row">
-    <x-gingerminds-core::form.inputs.textarea
-        id="translations_{{ $language->id }}_description"
-        label="{{ __('gingerminds-core::translation.form.description') }}"
-        :required="false"
-        name="translations[{{ $language->id }}][description]"
-        value="{{ old('translations.'.$language->id.'.description', $translation?->description) }}"
+    <x-gingerminds-cms::form.inputs.wysiwyg
+            id="translations_{{ $language->id }}_description"
+            name="translations[{{ $language->id }}][description]"
+            :required="false"
+            :label="__('gingerminds-core::translation.form.description')"
+            :value="old(
+            'translations.'.$language->id.'.description',
+            $translation?->description
+        )"
+            preset="minimal"
+            rows="8"
     />
 </div>
